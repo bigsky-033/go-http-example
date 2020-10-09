@@ -8,6 +8,8 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/bigsky-park/go-http-example/api/v1/handler"
 )
 
@@ -18,6 +20,7 @@ func main() {
 
 	sm := http.NewServeMux()
 	sm.Handle("/hello", hh)
+	sm.Handle("/metrics", promhttp.Handler())
 
 	s := &http.Server{
 		Addr:         ":18080",
