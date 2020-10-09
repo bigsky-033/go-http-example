@@ -17,15 +17,15 @@ var (
 )
 
 type Hello struct {
-	l *log.Logger
+	logger *log.Logger
 }
 
-func NewHello(l *log.Logger) *Hello {
-	return &Hello{l}
+func NewHello(logger *log.Logger) *Hello {
+	return &Hello{logger}
 }
 
 func (h *Hello) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	h.l.Println("Hello is called")
+	h.logger.Println("Hello is called")
 
 	if r.Method == http.MethodGet {
 		opsProcessed.Inc()
