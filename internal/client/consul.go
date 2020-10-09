@@ -35,14 +35,14 @@ func NewConsulClient(logger *log.Logger, agentAddress string, token string) *Con
 	}
 }
 
-func (c *Consul) Register(config *ServiceInfo) (string, error) {
+func (c *Consul) Register(serviceInfo *ServiceInfo) (string, error) {
 	registration := &api.AgentServiceRegistration{
-		ID:      config.Id,
-		Name:    config.Name,
-		Address: config.Address,
-		Tags:    config.Tags,
+		ID:      serviceInfo.Id,
+		Name:    serviceInfo.Name,
+		Address: serviceInfo.Address,
+		Tags:    serviceInfo.Tags,
 		Check: &api.AgentServiceCheck{
-			HTTP:     fmt.Sprintf("http://%s:%d/hello", config.Address, config.Port),
+			HTTP:     fmt.Sprintf("http://%s:%d/hello", serviceInfo.Address, serviceInfo.Port),
 			Interval: "5s",
 			Timeout:  "3s",
 		},
@@ -51,8 +51,8 @@ func (c *Consul) Register(config *ServiceInfo) (string, error) {
 	if err != nil {
 		log.Fatalf("[ERROR] Failed to register service %v\n", err)
 	}
-	log.Printf("[INFO] Success to register %s\n", config.Id)
-	return config.Id, nil
+	log.Printf("[INFO] Success to register %s\n", serviceInfo.Id)
+	return serviceInfo.Id, nil
 }
 
 func (c *Consul) Deregister(id string) {
