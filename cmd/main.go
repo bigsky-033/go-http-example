@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,19 +12,25 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/bigsky-park/go-http-example/api/v1/handler"
+	"github.com/bigsky-park/go-http-example/internal/client"
+)
+
+var (
+	httpPort    = 18080
+	serviceName = "go-http-example"
 )
 
 func main() {
-	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	logger := log.New(os.Stdout, fmt.Sprintf("[%s] ", serviceName), log.LstdFlags)
 
-	hh := handler.NewHello(l)
+	hh := handler.NewHello(logger)
 
 	sm := http.NewServeMux()
 	sm.Handle("/hello", hh)
 	sm.Handle("/metrics", promhttp.Handler())
 
 	s := &http.Server{
-		Addr:         ":18080",
+		Addr:         fmt.Sprintf(":%d", httpPort),
 		Handler:      sm,
 		IdleTimeout:  60 * time.Second,
 		ReadTimeout:  5 * time.Second,
@@ -33,9 +40,23 @@ func main() {
 	go func() {
 		err := s.ListenAndServe()
 		if err != nil {
-			l.Fatal(err)
+			logger.Fatal(err)
 		}
 	}()
+
+	consul := client.NewConsulClient(logger, "localhost:8500", "")
+	config := client.ServiceInfo{
+		Id:      "Hello-01",
+		Name:    serviceName,
+		Address: "localhost",
+		Port:    httpPort,
+		Tags:    []string{"http", "hello"},
+	}
+	if id, err := consul.Register(&config); err == nil {
+		defer consul.Deregister(id)
+	} else {
+		logger.Fatalf("Failed to resiter service %v", err)
+	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -47,6 +68,6 @@ func main() {
 	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	err := s.Shutdown(tc)
 	if err != nil {
-		l.Fatal(err)
+		logger.Fatal(err)
 	}
 }
