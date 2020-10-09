@@ -30,6 +30,7 @@ func (h *Hello) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		opsProcessed.Inc()
 		fmt.Fprintf(rw, "Hello")
+		return
 	}
 	rw.WriteHeader(http.StatusMethodNotAllowed)
 }
