@@ -41,6 +41,7 @@ func (c *Consul) Register(serviceInfo *ServiceInfo) (string, error) {
 		Name:    serviceInfo.Name,
 		Address: serviceInfo.Address,
 		Tags:    serviceInfo.Tags,
+		Port:    serviceInfo.Port,
 		Check: &api.AgentServiceCheck{
 			HTTP:     fmt.Sprintf("http://%s:%d/hello", serviceInfo.Address, serviceInfo.Port),
 			Interval: "5s",
