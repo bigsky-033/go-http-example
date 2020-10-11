@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	api "github.com/hashicorp/consul/api"
+	"github.com/hashicorp/consul/api"
 )
 
 type Consul struct {
