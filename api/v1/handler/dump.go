@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -33,4 +34,5 @@ func (d *Dump) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	d.logger.Println(string(dump))
+	fmt.Fprintf(rw, string(dump))
 }
