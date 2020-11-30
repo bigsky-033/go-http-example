@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	opsProcessed = promauto.NewCounter(prometheus.CounterOpts{
+	helloCallCounter = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "sample_app_hello_call_count",
 		Help: "The total number of hello call count",
 	})
@@ -28,7 +28,7 @@ func (h *Hello) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	h.logger.Println("Hello is called")
 
 	if r.Method == http.MethodGet {
-		opsProcessed.Inc()
+		helloCallCounter.Inc()
 		fmt.Fprintf(rw, "Hello")
 		return
 	}
