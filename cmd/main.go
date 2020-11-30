@@ -24,9 +24,11 @@ func main() {
 	logger := log.New(os.Stdout, fmt.Sprintf("[%s] ", serviceName), log.LstdFlags)
 
 	hh := handler.NewHello(logger)
+	dh := handler.NewDump(logger)
 
 	sm := http.NewServeMux()
 	sm.Handle("/hello", hh)
+	sm.Handle("/dump", dh)
 	sm.Handle("/metrics", promhttp.Handler())
 
 	s := &http.Server{
