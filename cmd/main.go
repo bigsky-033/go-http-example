@@ -12,7 +12,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/bigsky-park/go-http-example/api/v1/handler"
-	"github.com/bigsky-park/go-http-example/internal/client"
 )
 
 var (
@@ -46,19 +45,20 @@ func main() {
 		}
 	}()
 
-	consul := client.NewConsulClient(logger, "localhost:8500", "")
-	config := client.ServiceInfo{
-		Id:      "Hello-01",
-		Name:    serviceName,
-		Address: "localhost",
-		Port:    httpPort,
-		Tags:    []string{"http", "hello"},
-	}
-	if id, err := consul.Register(&config); err == nil {
-		defer consul.Deregister(id)
-	} else {
-		logger.Fatalf("Failed to resiter service %v", err)
-	}
+	// TODO: make consul register as configurable
+	//consul := client.NewConsulClient(logger, "localhost:8500", "")
+	//config := client.ServiceInfo{
+	//	Id:      "Hello-01",
+	//	Name:    serviceName,
+	//	Address: "localhost",
+	//	Port:    httpPort,
+	//	Tags:    []string{"http", "hello"},
+	//}
+	//if id, err := consul.Register(&config); err == nil {
+	//	defer consul.Deregister(id)
+	//} else {
+	//	logger.Fatalf("Failed to resiter service %v", err)
+	//}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
